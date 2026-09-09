@@ -90,7 +90,7 @@ env:
   CUSTOM_DTB: "false" # if u want use custom dtb file, and need set DTB_NAME.
   DTB_NAME: "veux" # if u want use custom dtb file, please set it
 
-  BUILD_DEBUGGER: "true" # Output build errors (flip to false once green).
+  BUILD_DEBUGGER: "false" # Output build errors (flip to false once green).
   SKIP_PATCH: "false" # Ignore errors found in Patch Debugger.
 
   BUILD_OTHER_CONFIG: "false" # Merge config files.
