@@ -106,6 +106,7 @@ runs:
           fi
 
       - name: Cleaned KernelSU and Hook
+        if: env.CLEAN_HOOK != 'false'
         shell: bash
         run: |
           cd $GITHUB_WORKSPACE/device_kernel

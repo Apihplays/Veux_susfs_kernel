@@ -13,7 +13,12 @@ env:
   EXTRA_CMDS : "LLVM=1 LLVM_IAS=1"
 
   KERNEL_SOURCE : "https://github.com/Apihplays/kernel_xiaomi_sm6375.git"
-  KERNEL_BRANCH : "main"
+  KERNEL_BRANCH : "resuki" # already ReSukiSU + SusFS integrated (vdso/RIL fix included)
+
+  # veux tree comes pre-integrated (fs/susfs.c + ReSukiSU + KSU_SUSFS config pins).
+  # Let the framework clone/build/package it as-is; do NOT re-inject or clean hooks.
+  CLEAN_HOOK : "false"
+  KERNELSU_AUTO_GET : "false"
 
   CLANG_SOURCE : "https://github.com/bachnxuan/aosp_clang_mirror/releases/download/clang-r563880c-13989888/clang-r563880c.tar.gz"
   CLANG_BRANCH : ""
@@ -32,10 +37,9 @@ env:
   KERNELSU_SOURCE : ""
   KERNELSU_BRANCH : ""
 
-  KERNELSU_AUTO_GET : "true" # if u want easy setting kernelsu, u can true.
-  KERNELSU_AUTO_FORK : "resukisu" # xxksu, rsuntk, next, resukisu and sukisu
+  KERNELSU_AUTO_FORK : "resukisu" # informational (AUTO_GET=false -> no re-injection)
 
-  SUSFS_ENABLE : true
+  SUSFS_ENABLE : false # SusFS already integrated in the resuki tree (fs/susfs.c)
   SUSFS_FIXED : false
 
   # Our Anykernel3 template (boot + vendor_boot + dtbo erase, veux/peux check)
@@ -115,9 +119,11 @@ jobs:
         uses: ./.github/workflows/build-ready
 
       - name: 🪝 Patch Kernel of SUSFS
+        if: env.SUSFS_ENABLE == 'true' # pre-integrated on resuki -> skipped
         uses: ./.github/workflows/patch-susfs
 
       - name: 🔗 Patch for no-kprobe
+        if: env.SUSFS_ENABLE == 'true' # pre-integrated on resuki -> skipped
         uses: ./.github/workflows/patch-no-kprobe
 
       - name: 🪛 Extra Kernel Options
