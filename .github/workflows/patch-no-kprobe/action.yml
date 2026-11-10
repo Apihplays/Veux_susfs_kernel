@@ -9,7 +9,7 @@ runs:
           cd $GITHUB_WORKSPACE/device_kernel
 
           # Detect SUSFS is used to enable the SUSFS inline hook
-          if [[ ${{ env.SUSFS_ENABLE }} == "true" ]] && { [[ "${{ env.KERNELSU_SOURCE }}" == *ReSukiSU* ]] || [[ "${{ env.KERNELSU_AUTO_FORK }}" == "resukisu" ]]; }; then
+          if [[ ${{ env.SUSFS_ENABLE }} == "true" ]] && { [[ "${{ env.KERNELSU_SOURCE }}" == *ReSukiSU* ]] || [[ "${{ env.KERNELSU_AUTO_FORK }}" == "resukisu" ]] || [[ "${{ env.KERNELSU_SOURCE }}" == *BakaSU* ]] || [[ "${{ env.KERNELSU_AUTO_FORK }}" == "bakasu" ]]; }; then
             # Core
             cp /tmp/Patches/susfs_inline_hook_patches.sh ./
             bash susfs_inline_hook_patches.sh ./

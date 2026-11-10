@@ -9,6 +9,13 @@ on:
 
 jobs:
   # Xiaomi
+  build-redmi-note11pro-5g-aosp-a16:
+    name: "Build Xiaomi Redmi Note 11 Pro 5G (AOSP Based A16)"
+    strategy:
+      fail-fast: true
+    uses: ./.github/workflows/build-redmi-note11pro-5g-aosp-a16.yml
+    secrets: inherit
+
   build-xiaomi-12-lite-lineageos23-a16:
     name: "Build Xiaomi 12 Lite (LineageOS 23 A16)"
     strategy:

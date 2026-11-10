@@ -165,6 +165,16 @@ runs:
                     KERNELSU_BRANCH="legacy"
                 fi
 
+            elif [[ "${{ env.KERNELSU_AUTO_FORK }}" == "bakasu" ]]; then
+                KERNELSU_AUTHOR="Baka-SU"
+                KERNELSU_NAME="BakaSU"
+                KERNELSU_ORIGIN_BRANCH="main"
+                if [[ "${{ env.SUSFS_ENABLE }}" == "true" ]]; then
+                    KERNELSU_BRANCH="main"
+                else
+                    KERNELSU_BRANCH="main"
+                fi
+
             elif [[ "${{ env.KERNELSU_AUTO_FORK }}" == "resukisu" ]]; then
                 KERNELSU_AUTHOR="ReSukiSU"
                 KERNELSU_NAME="ReSukiSU"
