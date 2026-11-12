@@ -122,6 +122,21 @@ jobs:
 
           echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
+      - name: 📚 Install UAPI Headers (BakaSU preinit)
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+
+          # BakaSU's preinit_runner.mk needs $(objtree)/usr/include/linux/unistd.h.
+          # Installing it up-front avoids its nested `make -C $(srctree) O=$(objtree)`
+          # call, which resolves srctree to `..` and fails on `find ../techpack`.
+          if [[ -f out/usr/include/linux/unistd.h ]]; then
+            echo "[+] UAPI headers already installed, Skipped."
+          else
+            make -s ARCH=${{ env.KERNEL_ARCH }} headers_install INSTALL_HDR_PATH="$PWD/out/usr"
+            test -f out/usr/include/linux/unistd.h
+            echo "[+] UAPI headers installed to out/usr/include."
+          fi
+
       - name: 🧰 Patch Kernel of Re:Kernel
         uses: ./.github/workflows/patch-rekernel
 
