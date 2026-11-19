@@ -21,6 +21,7 @@ runs:
           cd $GITHUB_WORKSPACE/device_kernel
 
           echo "CONFIG_KSU_SUSFS=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_KSU_HACK_ARM64_BRANCH_LINK=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
           if grep -q "THREAD_INFO_IN_TASK" "drivers/kernelsu/Kconfig"; then
             echo "CONFIG_THREAD_INFO_IN_TASK=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
@@ -42,42 +43,17 @@ runs:
           patch -p1 < susfs4ksu/kernel_patches/50_add_susfs_in_qgki-android11-5.4.patch || true
           echo "[+] Applied 50_add_susfs_in_qgki-android11-5.4.patch."
 
-          # Apply the midori SUSFS fix patch
+          # Apply the midori SUSFS fix patch (cyberc3dr/nGKI_Kernel_Build)
           curl -sL https://raw.githubusercontent.com/cyberc3dr/nGKI_Kernel_Build/rebase/Patches/Patch/midori_susfs_fix.patch -o midori_susfs_fix.patch
           patch -p1 < midori_susfs_fix.patch || true
           echo "[+] Applied midori_susfs_fix.patch."
 
           echo "[+] SUSFS Patch completed."
 
-      - name: SUSFS Patch Fixed
-        if: env.SUSFS_ENABLE == 'true' && env.SUSFS_SKIP != 'true'
-        shell: bash
-        run: |
-          cd $GITHUB_WORKSPACE/device_kernel/
-
-          if [[ -z "${{ env.SUSFS_PATCH_FIXED }}" ]]; then
-            echo "[-] You didn't provide any patch file."
-
-          else
-            IFS=',' read -ra FIXED_LIST <<< "${{ env.SUSFS_PATCH_FIXED }}"
-            echo "[+] =================================== "
-            for i in "${!FIXED_LIST[@]}"; do
-              echo "Patching -> ${FIXED_LIST[$i]}"
-
-              if [[ -z "${{ env.SUSFS_FOLDER_FIXED }}" ]]; then
-                cp NonGKI_Kernel_Patches/${FIXED_LIST[$i]}.patch ./
-
-              else
-                cp NonGKI_Kernel_Patches/"${{ env.SUSFS_FOLDER_FIXED }}"/${FIXED_LIST[$i]}.patch ./
-
-              fi
-
-              patch -p1 < ${FIXED_LIST[$i]}.patch || true
-              echo "[+] Patching successful!"
-              echo "[+] =================================== "
-            done
-
-          fi
+      # NOTE: the old "SUSFS Patch Fixed" step is intentionally removed.
+      # It depended on the JackA1ltman/NonGKI_Kernel_Patches clone and the
+      # SUSFS_PATCH_FIXED/SUSFS_FOLDER_FIXED env vars, which are no longer
+      # part of this pipeline (we apply midori SUSFS patches directly above).
 
       - name: Upload Build Patch Rejected Files
         if: env.BUILD_DEBUGGER == 'true'
