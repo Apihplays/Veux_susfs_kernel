@@ -30,6 +30,16 @@ runs:
           key: build-kernel-${{ env.DEVICE_NAME }}${{ env.UPLOADNAME }}
           max-size: 2G
 
+      - name: 🧹 Clean source tree (make sources clean before build)
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          # Reset any modified/untracked files so the kernel build does not hit
+          # "source tree is not clean" (leftovers from the patch steps above).
+          git reset -q --hard HEAD 2>/dev/null || true
+          git clean -qfd 2>/dev/null || true
+          echo "[+] Source tree cleaned."
+
       - name: Build Kernel
         shell: bash
         run: |
