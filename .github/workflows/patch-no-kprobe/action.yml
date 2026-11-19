@@ -32,6 +32,10 @@ runs:
             echo "CONFIG_KSU_HACK_ARM64_BRANCH_LINK=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
             echo "[+] applied CONFIG_KSU_HACK_ARM64_BRANCH_LINK."
 
+          elif [[ ${{ env.HOOK_METHOD }} == "inline" ]]; then
+            echo "CONFIG_KSU_HACK_ARM64_BRANCH_LINK=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+            echo "[+] applied CONFIG_KSU_HACK_ARM64_BRANCH_LINK (inline method, de-inline SUSFS)."
+
           else
             echo "[-] please input a vaild option!"
             false
