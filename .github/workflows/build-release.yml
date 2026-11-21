@@ -24,8 +24,12 @@ on:
 
 jobs:
   build-kernel:
-    name: "Step Build Kernel"
-    uses: ./.github/workflows/build-kernel.yml
+    name: "Step Build Kernel (Redmi Note 11 Pro 5G)"
+    # This fork only ships for veux/peux. Call the single device workflow
+    # directly so the release contains only the Redmi Note 11 Pro 5G zip.
+    # Swap back to ./.github/workflows/build-kernel.yml for the full upstream
+    # multi-device matrix.
+    uses: ./.github/workflows/build-redmi-note11pro-5g-aosp-a16.yml
     secrets: inherit
     strategy:
       fail-fast: true
@@ -47,16 +51,13 @@ jobs:
 
         | Device Name | Codename | Kernel | System | Android | Method | KernelSU | SUSFS | Re:Kernel | BBG | NoMount | VPNHide | fgetpriority |
         |----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|
-        | Xiaomi 12 Lite | taoyao | 5.4 | LineageOS 23.2 | 16 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-        | Poco X5 5G | moonstone | 5.4 | LineageOS 23.2 | 16 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-        | Nothing Phone (1) | spacewar | 5.4 | Evolution X 11.10 | 16 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ❌ | ✅ | ✅ |
-        | Nothing Phone (1) | spacewar | 5.4 | LineageOS 24.0 | 17 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-        | Nothing Phone (1) | spacewar | 5.4 | Nothing OS 3.2 | 15 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-        | Nothing Phone (1) | spacewar | 5.4 | Nothing OS 5.0 | 17 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
-        | Nothing Phone (1) | spacewar | 5.4 | PixelOS | 17 | Anykernel3 | xxKSU | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ |
+        | Redmi Note 11 Pro 5G | veux | 5.4 | AOSP | 16 | AnyKernel3 | xxKSU (backslashxx) | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
         - Specific device information: [Supported List](Supported_list.md).
         - The KernelSU version is for reference only. It is normal for the KernelSU version embedded in SUSFS to be lower.
+        - KernelSU manager: use the **xxKSU / backslashxx** manager. Verified working with the build from [run 44862324974](https://github.com/Apihplays/Veux_susfs_kernel/actions/runs/44862324974).
+        - Enabled for this device: SUSFS (inline hook), NoMount, KernelSU (xxKSU), ThinLTO, SUSFS device-fix patch, cmdline/banner/DTB parity with the nebula reference zip.
+        - Not enabled: Re:Kernel, Baseband Guard, KPM, Droidspaces, VPNHide, fgetpriority.
 
     steps:
       # Checkout the code
