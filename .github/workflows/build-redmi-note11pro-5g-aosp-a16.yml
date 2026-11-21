@@ -122,6 +122,13 @@ jobs:
 
           echo "CONFIG_TMPFS_XATTR=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
 
+          # vmlinux link fix (clang-r614150 / full LTO):
+          #   ld.lld: error: undefined symbol: __stack_chk_guard
+          # Full LTO drops the arm64 per-task stack-protector guard settings,
+          # while ThinLTO keeps them (and is the known-good local build path).
+          sed -i '/^# CONFIG_THINLTO is not set$/d' ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+          echo "CONFIG_THINLTO=y" >> ./arch/${{ env.KERNEL_ARCH }}/configs/${{ env.DEFCONFIG_NAME }}
+
       - name: 📚 Install UAPI Headers (BakaSU preinit)
         run: |
           cd $GITHUB_WORKSPACE/device_kernel
