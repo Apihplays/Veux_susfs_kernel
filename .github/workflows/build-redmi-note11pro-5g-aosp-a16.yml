@@ -10,7 +10,14 @@ env:
   DEVICE_CODENAME : "veux"
 
   CUSTOM_CMDS : "CLANG_TRIPLE=aarch64-linux-gnu-"
-  EXTRA_CMDS : "LD=ld.lld"
+  # CROSS_COMPILE from the Android GCC toolchain makes this 5.4 kbuild pass
+  # --target=aarch64-linux-android to clang. On that target clang ignores
+  # -mstack-protector-guard=sysreg and emits global __stack_chk_guard refs,
+  # but CONFIG_STACKPROTECTOR_PER_TASK=y omits the global definition ->
+  # vmlinux link fails. Override the target to aarch64-linux-gnu (the same
+  # target used by the working local build) via KCFLAGS, which is appended
+  # after CLANG_FLAGS in KBUILD_CFLAGS.
+  EXTRA_CMDS : "LD=ld.lld KCFLAGS=--target=aarch64-linux-gnu"
 
   KERNEL_SOURCE : "https://github.com/frost-testzone/kernel_xiaomi_sm6375.git"
   KERNEL_BRANCH : "main"
