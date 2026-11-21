@@ -45,8 +45,30 @@ runs:
 
           # Apply the midori SUSFS fix patch (cyberc3dr/nGKI_Kernel_Build)
           curl -sL https://raw.githubusercontent.com/cyberc3dr/nGKI_Kernel_Build/rebase/Patches/Patch/midori_susfs_fix.patch -o midori_susfs_fix.patch
-          patch -p1 < midori_susfs_fix.patch || true
+          if ! patch -p1 --forward < midori_susfs_fix.patch; then
+            echo "::error::midori_susfs_fix.patch failed to apply"
+            exit 1
+          fi
           echo "[+] Applied midori_susfs_fix.patch."
+
+          # Device-specific SUSFS fixes for SM6375/veux.
+          # The generic midori patch cannot add the missing
+          # `#include <linux/susfs_def.h>` hunk in fs/proc/task_mmu.c on this
+          # kernel, which makes the build fail with:
+          #   error: implicit declaration of function 'SUSFS_IS_INODE_SUS_MAP'
+          #   error: implicit declaration of function 'SUSFS_IS_INODE_OPEN_REDIRECT'
+          # It also fixes the fs/proc/fd.c spoof block and kernel/sys.c uname
+          # spoof hunks that were rejected above.
+          # Source: JackA1ltman/NonGKI_Kernel_Patches@mi_kernel
+          #         redmi_note11pro_5g_aosp_a16/susfs_fixed_eplus.patch
+          if [[ "${{ env.DEVICE_CODENAME }}" == "veux" ]]; then
+            curl -sL "https://raw.githubusercontent.com/JackA1ltman/NonGKI_Kernel_Patches/mi_kernel/redmi_note11pro_5g_aosp_a16/susfs_fixed_eplus.patch" -o susfs_fixed_eplus.patch
+            if ! patch -p1 --forward < susfs_fixed_eplus.patch; then
+              echo "::error::susfs_fixed_eplus.patch failed to apply"
+              exit 1
+            fi
+            echo "[+] Applied susfs_fixed_eplus.patch (SM6375/veux)."
+          fi
 
           echo "[+] SUSFS Patch completed."
 
