@@ -129,10 +129,15 @@ jobs:
           # BakaSU's preinit_runner.mk needs $(objtree)/usr/include/linux/unistd.h.
           # Installing it up-front avoids its nested `make -C $(srctree) O=$(objtree)`
           # call, which resolves srctree to `..` and fails on `find ../techpack`.
+          #
+          # IMPORTANT: always pass O=out here. Without it objtree == srctree and
+          # the "headers" target creates arch/arm64/include/generated in the
+          # source tree, which later makes the O=out build abort with
+          # "*** The source tree is not clean, please run 'make ARCH=arm64 mrproper'".
           if [[ -f out/usr/include/linux/unistd.h ]]; then
             echo "[+] UAPI headers already installed, Skipped."
           else
-            make -s ARCH=${{ env.KERNEL_ARCH }} headers_install INSTALL_HDR_PATH="$PWD/out/usr"
+            make -s O=out ARCH=${{ env.KERNEL_ARCH }} headers_install INSTALL_HDR_PATH="$PWD/out/usr"
             test -f out/usr/include/linux/unistd.h
             echo "[+] UAPI headers installed to out/usr/include."
           fi

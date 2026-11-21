@@ -30,24 +30,13 @@ runs:
           key: build-kernel-${{ env.DEVICE_NAME }}${{ env.UPLOADNAME }}
           max-size: 2G
 
-      - name: 🧹 Clean source tree (make sources clean before build)
-        shell: bash
-        run: |
-          cd $GITHUB_WORKSPACE/device_kernel
-
-          # Reset any modified/untracked files so the kernel build does not hit
-          # "source tree is not clean" (leftovers from the patch steps above).
-          git reset -q --hard HEAD 2>/dev/null || true
-          git clean -qfx 2>/dev/null || true
-
-          # Fully reset the source tree (kernel source dir, not out/).
-          # "make mrproper" removes every generated file and resets the tree
-          # to a pristine state so outputmakefile's "source tree is not
-          # clean" check never trips.
-          echo "[+] Running make mrproper in source tree..."
-          make mrproper 2>/dev/null || true
-          git reset -q --hard HEAD 2>/dev/null || true
-          git clean -qfx 2>/dev/null || true
+      # NOTE: no "clean source tree" step here on purpose.
+      # It used to run `git reset --hard` + `git clean` + `make mrproper` after
+      # all patch steps, which threw away every patch (SUSFS, no-kprobe,
+      # NoMount, KernelSU symlink/Makefile edits) and the defconfig appends
+      # (CONFIG_KSU*, CONFIG_TMPFS_XATTR). A fresh shallow clone is already
+      # clean; if a clean is ever needed it must run right after cloning and
+      # before patching, using `git clean -ffdx` (both -x and -d).
 
       - name: Build Kernel
         shell: bash
