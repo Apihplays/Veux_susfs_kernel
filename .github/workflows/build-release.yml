@@ -51,13 +51,13 @@ jobs:
 
         | Device Name | Codename | Kernel | System | Android | Method | KernelSU | SUSFS | Re:Kernel | BBG | NoMount | VPNHide | fgetpriority |
         |----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|----------|
-        | Redmi Note 11 Pro 5G | veux | 5.4 | AOSP | 16 | AnyKernel3 | xxKSU (backslashxx) | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+        | Redmi Note 11 Pro 5G | veux | 5.4 | AOSP | 16 | AnyKernel3 | xxKSU | v2.3.0 | ❌ | ❌ | ✅ | ❌ | ❌ |
 
         - Specific device information: [Supported List](Supported_list.md).
         - The KernelSU version is for reference only. It is normal for the KernelSU version embedded in SUSFS to be lower.
-        - KernelSU manager: use the **xxKSU / backslashxx** manager. Verified working with the build from [run 44862324974](https://github.com/Apihplays/Veux_susfs_kernel/actions/runs/44862324974).
-        - Enabled for this device: SUSFS (inline hook), NoMount, KernelSU (xxKSU), ThinLTO, SUSFS device-fix patch, cmdline/banner/DTB parity with the nebula reference zip.
-        - Not enabled: Re:Kernel, Baseband Guard, KPM, Droidspaces, VPNHide, fgetpriority.
+        - KernelSU by **xxKSU (backslashxx)** — use the xxKSU manager. Verified with [run 44862324974](https://github.com/Apihplays/Veux_susfs_kernel/actions/runs/44862324974).
+        - Enabled: SUSFS v2.3.0 (inline hook), NoMount, xxKSU, ThinLTO, SUSFS device-fix patch, cmdline/banner/DTB parity with the nebula reference zip.
+        - Not enabled: Re:Kernel, Baseband Guard (BBG), VPNHide, fgetpriority, KPM, Droidspaces.
 
     steps:
       # Checkout the code
